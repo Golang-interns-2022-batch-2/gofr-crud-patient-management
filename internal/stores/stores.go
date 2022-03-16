@@ -121,10 +121,6 @@ func (dbstore *DBStorer) GetAll(ctx *gofr.Context) ([]*models.Patient, error) {
 				return nil, errors.Error("error scanning data")
 			}
 
-			if len(patients) == 0 {
-				return nil, errors.EntityNotFound{Entity: "patient"}
-			}
-
 			return patients, nil
 		}
 

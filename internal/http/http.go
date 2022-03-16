@@ -100,11 +100,11 @@ func (h *Handler) Update(ctx *gofr.Context) (interface{}, error) {
 	}
 
 	e := ctx.Bind(&patient)
-	patient.ID = id
-
 	if e != nil {
 		return nil, errors.InvalidParam{}
 	}
+
+	patient.ID = id
 
 	pat, err := h.service.Update(ctx, &patient)
 	if err != nil {
