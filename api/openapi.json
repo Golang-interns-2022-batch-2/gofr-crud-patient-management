@@ -1,0 +1,639 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+      "title": "Patient Management System",
+      "description": "This is the api specification for basic patient api's",
+      "version": "1.0.0",
+      "contact": {
+        "email": "anish.kumar@zopsmart.com",
+        "name": "Anish"
+      }
+    },
+    "servers": [
+      {
+        "url": "http:/localhost:8000"
+      }
+    ],
+    "tags": [
+      {
+        "name": "patient",
+        "description": "patient resource endpoints"
+      }
+    ],
+    "paths": {
+      "/patient": {
+        "get": {
+          "tags": [
+            "patient"
+          ],
+          "summary": "Get all the patients in databases",
+          "operationId": "getPatientById",
+          "responses": {
+            "200": {
+              "description": "Success retrieving all patients",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "properties": {
+                      "code": {
+                        "type": "string"
+                      },
+                      "status": {
+                        "type": "string",
+                        "enum": [
+                          "SUCCESS",
+                          "ERROR"
+                        ]
+                      },
+                      "data": {
+                        "type": "object",
+                        "properties": {
+                          "patient": {
+                            "type": "array",
+                            "items": {
+                              "$ref": "#/components/schemas/Patient"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Bad Request",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "properties": {
+                      "code": {
+                        "type": "string",
+                        "default": "400"
+                      },
+                      "status": {
+                        "type": "string",
+                        "default": "ERROR"
+                      },
+                      "message": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Patient Not Found",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "properties": {
+                      "code": {
+                        "type": "string",
+                        "default": "404"
+                      },
+                      "status": {
+                        "type": "string",
+                        "default": "ERROR"
+                      },
+                      "message": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal Server Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "properties": {
+                      "code": {
+                        "type": "string",
+                        "default": "500"
+                      },
+                      "status": {
+                        "type": "string",
+                        "default": "ERROR"
+                      },
+                      "message": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "post": {
+          "tags": [
+            "patient"
+          ],
+          "summary": "Creates new patient to the database",
+          "description": "Validates the provided fields and creates a new entry for patient if valid",
+          "operationId": "createPatient",
+          "requestBody": {
+            "description": "Patient object that needs to be added to the db",
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "phone": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "bloodgroup": {
+                      "type": "string",
+                      "enum": [
+                        "+A",
+                        "-A",
+                        "+B",
+                        "-B",
+                        "+O",
+                        "-AB",
+                        "+AB"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success Creating Patient",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "properties": {
+                      "code": {
+                        "type": "string"
+                      },
+                      "status": {
+                        "type": "string",
+                        "enum": [
+                          "SUCCESS",
+                          "ERROR"
+                        ]
+                      },
+                      "data": {
+                        "type": "object",
+                        "properties": {
+                          "patient": {
+                            "$ref": "#/components/schemas/Patient"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Bad Request",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "properties": {
+                      "code": {
+                        "type": "string",
+                        "default": "400"
+                      },
+                      "status": {
+                        "type": "string",
+                        "default": "ERROR"
+                      },
+                      "message": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal Server Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "properties": {
+                      "code": {
+                        "type": "string",
+                        "default": "500"
+                      },
+                      "status": {
+                        "type": "string",
+                        "default": "ERROR"
+                      },
+                      "message": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/patient/{id}": {
+        "get": {
+          "tags": [
+            "patient"
+          ],
+          "summary": "Get Patient By Id",
+          "operationId": "getAllPatient",
+          "parameters": [
+            {
+              "in": "path",
+              "name": "id",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success Updating Patient",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ApiResponseSuccess"
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid ID or field",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "properties": {
+                      "code": {
+                        "type": "string",
+                        "default": "400"
+                      },
+                      "status": {
+                        "type": "string",
+                        "default": "ERROR"
+                      },
+                      "message": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Patient with given Id not found",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "properties": {
+                      "code": {
+                        "type": "string",
+                        "default": "404"
+                      },
+                      "status": {
+                        "type": "string",
+                        "default": "ERROR"
+                      },
+                      "message": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal Server Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "properties": {
+                      "code": {
+                        "type": "string",
+                        "default": "500"
+                      },
+                      "status": {
+                        "type": "string",
+                        "default": "ERROR"
+                      },
+                      "message": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "put": {
+          "tags": [
+            "patient"
+          ],
+          "summary": "Update an existing patient",
+          "operationId": "updatePatient",
+          "parameters": [
+            {
+              "in": "path",
+              "name": "id",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              }
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Patient"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success Updating Patient",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ApiResponseSuccess"
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid ID or field in request body supplied",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "properties": {
+                      "code": {
+                        "type": "string",
+                        "default": "400"
+                      },
+                      "status": {
+                        "type": "string",
+                        "default": "ERROR"
+                      },
+                      "message": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Patient with given Id not found",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "properties": {
+                      "code": {
+                        "type": "string",
+                        "default": "404"
+                      },
+                      "status": {
+                        "type": "string",
+                        "default": "ERROR"
+                      },
+                      "message": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal Server Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "properties": {
+                      "code": {
+                        "type": "string",
+                        "default": "500"
+                      },
+                      "status": {
+                        "type": "string",
+                        "default": "ERROR"
+                      },
+                      "message": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "delete": {
+          "tags": [
+            "patient"
+          ],
+          "summary": "Delete Patient By Id",
+          "operationId": "deletePatient",
+          "parameters": [
+            {
+              "in": "path",
+              "name": "id",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success Deleting Patient",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "properties": {
+                      "code": {
+                        "type": "string",
+                        "default": "200"
+                      },
+                      "status": {
+                        "type": "string",
+                        "default": "SUCCESS"
+                      },
+                      "message": {
+                        "type": "string",
+                        "default": "Patient deleted successfully"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid ID or field",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "properties": {
+                      "code": {
+                        "type": "string",
+                        "default": "400"
+                      },
+                      "status": {
+                        "type": "string",
+                        "default": "ERROR"
+                      },
+                      "message": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Patient with given Id not found",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "properties": {
+                      "code": {
+                        "type": "string",
+                        "default": "404"
+                      },
+                      "status": {
+                        "type": "string",
+                        "default": "ERROR"
+                      },
+                      "message": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal Server Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "properties": {
+                      "code": {
+                        "type": "string",
+                        "default": "500"
+                      },
+                      "status": {
+                        "type": "string",
+                        "default": "ERROR"
+                      },
+                      "message": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "Patient": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "format": "int",
+              "description": "Id of Patient. Ignored in POST  /patient request "
+            },
+            "name": {
+              "type": "string",
+              "description": "Name of the patient"
+            },
+            "phone": {
+              "type": "string",
+              "description": "Phone number of the patient"
+            },
+            "discharged": {
+              "type": "boolean",
+              "description": "Whethet the patient is discharged or not"
+            },
+            "description": {
+              "type": "string",
+              "description": "Short Description of patient's symptoms"
+            },
+            "bloodgroup": {
+              "type": "string",
+              "enum": [
+                "+A",
+                "-A",
+                "+B",
+                "-B",
+                "+O",
+                "-AB",
+                "+AB"
+              ]
+            },
+            "createdAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "updatedAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "deletedAt": {
+              "type": "string",
+              "format": "date-time",
+              "default": null
+            }
+          }
+        },
+        "ApiResponseSuccess": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "status": {
+              "type": "string",
+              "default": "SUCCESS"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "patient": {
+                  "$ref": "#/components/schemas/Patient"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "externalDocs": {
+      "description": "Find out more about Swagger",
+      "url": "http://swagger.io"
+    }
+  }
