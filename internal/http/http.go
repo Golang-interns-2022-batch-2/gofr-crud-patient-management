@@ -5,18 +5,13 @@ import (
 
 	"developer.zopsmart.com/go/gofr/pkg/errors"
 	"developer.zopsmart.com/go/gofr/pkg/gofr"
+	"developer.zopsmart.com/go/gofr/pkg/gofr/types"
 	"github.com/punitj12/patient-app-gofr/internal/models"
 	"github.com/punitj12/patient-app-gofr/internal/services"
 )
 
 type res struct {
-	Code   int         `json:"code"`
-	Status string      `json:"status"`
-	Data   interface{} `json:"data"`
-}
-
-type data struct {
-	Patient interface{} `json:"patient"`
+	Data interface{} `json:"patient"`
 }
 
 type Handler struct {
@@ -43,12 +38,12 @@ func (h *Handler) Create(ctx *gofr.Context) (interface{}, error) {
 	}
 
 	r := res{
-		Code:   200,
-		Status: "SUCCESS",
-		Data:   data{pat},
+		Data: pat,
 	}
 
-	return r, nil
+	return types.Response{
+		Data: r,
+	}, nil
 }
 
 func (h *Handler) Get(ctx *gofr.Context) (interface{}, error) {
@@ -65,12 +60,12 @@ func (h *Handler) Get(ctx *gofr.Context) (interface{}, error) {
 	}
 
 	r := res{
-		Code:   200,
-		Status: "SUCCESS",
-		Data:   data{patient},
+		Data: patient,
 	}
 
-	return r, nil
+	return types.Response{
+		Data: r,
+	}, nil
 }
 
 func (h *Handler) GetAll(ctx *gofr.Context) (interface{}, error) {
@@ -81,12 +76,12 @@ func (h *Handler) GetAll(ctx *gofr.Context) (interface{}, error) {
 	}
 
 	r := res{
-		Code:   200,
-		Status: "SUCCESS",
-		Data:   data{patient},
+		Data: patient,
 	}
 
-	return r, nil
+	return types.Response{
+		Data: r,
+	}, nil
 }
 
 func (h *Handler) Update(ctx *gofr.Context) (interface{}, error) {
@@ -112,12 +107,12 @@ func (h *Handler) Update(ctx *gofr.Context) (interface{}, error) {
 	}
 
 	r := res{
-		Code:   200,
-		Status: "SUCCESS",
-		Data:   data{pat},
+		Data: pat,
 	}
 
-	return r, nil
+	return types.Response{
+		Data: r,
+	}, nil
 }
 
 func (h *Handler) Delete(ctx *gofr.Context) (interface{}, error) {
@@ -134,10 +129,10 @@ func (h *Handler) Delete(ctx *gofr.Context) (interface{}, error) {
 	}
 
 	r := res{
-		Code:   200,
-		Status: "SUCCESS",
-		Data:   "Patient deleted successfully",
+		Data: "Patient deleted successfully",
 	}
 
-	return r, nil
+	return types.Response{
+		Data: r,
+	}, nil
 }

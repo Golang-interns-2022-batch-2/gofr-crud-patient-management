@@ -13,6 +13,7 @@ import (
 	"developer.zopsmart.com/go/gofr/pkg/gofr"
 	"developer.zopsmart.com/go/gofr/pkg/gofr/request"
 	"developer.zopsmart.com/go/gofr/pkg/gofr/responder"
+	"developer.zopsmart.com/go/gofr/pkg/gofr/types"
 	"github.com/golang/mock/gomock"
 	"github.com/punitj12/patient-app-gofr/internal/models"
 	"github.com/punitj12/patient-app-gofr/internal/services"
@@ -54,17 +55,17 @@ func TestCreate(t *testing.T) {
 			id:         1,
 			body:       []byte(`{"id":1,"name":"Abhishek","bloodGroup":"+AB","description":"Head Ache","phone":"+919232323232"}`),
 			outputCode: 200,
-			output: res{
-				Code:   200,
-				Status: "SUCCESS",
-				Data: data{&models.Patient{
-					ID:          1,
-					Name:        null.StringFrom("Abhishek"),
-					Phone:       null.StringFrom("+919232323232"),
-					Discharged:  null.BoolFrom(false),
-					BloodGroup:  null.StringFrom("+AB"),
-					Description: null.StringFrom("Head Ache"),
-				}},
+			output: types.Response{
+				Data: res{
+					Data: &models.Patient{
+						ID:          1,
+						Name:        null.StringFrom("Abhishek"),
+						Phone:       null.StringFrom("+919232323232"),
+						Discharged:  null.BoolFrom(false),
+						BloodGroup:  null.StringFrom("+AB"),
+						Description: null.StringFrom("Head Ache"),
+					},
+				},
 			},
 			mock: PatientServiceMock.
 				EXPECT().
@@ -152,10 +153,10 @@ func TestGetHandler(t *testing.T) {
 		{
 			desc: "success case",
 			id:   "1",
-			output: res{
-				Code:   200,
-				Status: "SUCCESS",
-				Data:   data{&pat},
+			output: types.Response{
+				Data: res{
+					Data: &pat,
+				},
 			},
 			outputCode: 200,
 			mock: PatientServiceMock.EXPECT().Get(gomock.Any(), 1).
@@ -241,10 +242,10 @@ func TestGetAllHandler(t *testing.T) {
 		{
 			desc: "success case",
 			id:   1,
-			output: res{
-				Code:   200,
-				Status: "SUCCESS",
-				Data:   data{pat},
+			output: types.Response{
+				Data: res{
+					Data: pat,
+				},
 			},
 			outputCode: 200,
 			mock: PatientServiceMock.EXPECT().GetAll(gomock.Any()).
@@ -328,10 +329,10 @@ func TestUpdateHandler(t *testing.T) {
 			id:         "1",
 			body:       []byte(`{"id":1,"name":"Abhishek","bloodGroup":"+AB","description":"Head Ache","phone":"+919232323232"}`),
 			outputCode: 200,
-			output: res{
-				Code:   200,
-				Status: "SUCCESS",
-				Data:   data{&pat},
+			output: types.Response{
+				Data: res{
+					Data: &pat,
+				},
 			},
 			mock: PatientServiceMock.
 				EXPECT().
@@ -419,14 +420,15 @@ func TestDeleteHandler(t *testing.T) {
 		{
 			desc: "success case",
 			id:   "1",
-			output: res{
-				Code:   200,
-				Status: "SUCCESS",
-				Data:   "Patient deleted successfully",
+			output: types.Response{
+				Data: res{
+					Data: "Patient deleted successfully",
+				},
 			},
 			outputCode: 200,
 			mock: PatientServiceMock.EXPECT().Delete(gomock.Any(), 1).
 				Return(nil),
+			err: nil,
 		},
 		{
 			desc:       "patient not found",
