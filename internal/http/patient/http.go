@@ -18,11 +18,6 @@ func New(patientService service.Patient) *API {
 	return &API{PatientService: patientService}
 }
 
-type ErrorStorer struct {
-	Code    int    `json:"code"`
-	Status  string `json:"status"`
-	Message string `json:"Message"`
-}
 type ResponseStorer struct {
 	Code   int         `json:"code"`
 	Status string      `json:"status"`
@@ -30,13 +25,11 @@ type ResponseStorer struct {
 }
 
 type data struct {
-	Patient interface{}
+	Patient interface{} `json:"patient"`
 }
 
 // GetPatient
 func (p *API) GetByID(ctx *gofr.Context) (interface{}, error) {
-	var response interface{}
-
 	idString := ctx.PathParam("id")
 
 	patient, err := p.PatientService.GetByID(ctx, idString)
@@ -45,13 +38,9 @@ func (p *API) GetByID(ctx *gofr.Context) (interface{}, error) {
 		return nil, err
 	}
 
-	response = ResponseStorer{
-		Code:   http.StatusOK,
-		Status: "SUCCESS",
-		Data:   data{patient},
-	}
+	Data := data{patient}
 	r := types.Response{
-		Data: response,
+		Data: Data,
 	}
 
 	return r, nil
@@ -59,8 +48,6 @@ func (p *API) GetByID(ctx *gofr.Context) (interface{}, error) {
 
 // createPatient
 func (p *API) Create(ctx *gofr.Context) (interface{}, error) {
-	var response interface{}
-
 	var patient models.Patient
 
 	err := ctx.Bind(&patient)
@@ -74,13 +61,9 @@ func (p *API) Create(ctx *gofr.Context) (interface{}, error) {
 		return nil, err
 	}
 
-	response = ResponseStorer{
-		Code:   http.StatusOK,
-		Status: "SUCCESS",
-		Data:   data{patientVal},
-	}
+	Data := data{patientVal}
 	r := types.Response{
-		Data: response,
+		Data: Data,
 	}
 
 	return r, nil
@@ -88,8 +71,6 @@ func (p *API) Create(ctx *gofr.Context) (interface{}, error) {
 
 // updatePatient
 func (p *API) Update(ctx *gofr.Context) (interface{}, error) {
-	var response interface{}
-
 	idString := ctx.PathParam("id")
 
 	var patient *models.Patient
@@ -105,14 +86,9 @@ func (p *API) Update(ctx *gofr.Context) (interface{}, error) {
 		return nil, err
 	}
 
-	response = ResponseStorer{
-		Code:   http.StatusOK,
-		Status: "SUCCESS",
-		Data:   data{patient},
-	}
-
+	Data := data{patient}
 	r := types.Response{
-		Data: response,
+		Data: Data,
 	}
 
 	return r, nil
@@ -120,22 +96,15 @@ func (p *API) Update(ctx *gofr.Context) (interface{}, error) {
 
 // GetPatients
 func (p *API) Get(ctx *gofr.Context) (interface{}, error) {
-	var response interface{}
-
 	patients, err := p.PatientService.Get(ctx)
 
 	if err != nil {
 		return nil, err
 	}
 
-	response = ResponseStorer{
-		Code:   http.StatusOK,
-		Status: "SUCCESS",
-		Data:   data{patients},
-	}
-
+	Data := data{patients}
 	r := types.Response{
-		Data: response,
+		Data: Data,
 	}
 
 	return r, nil
