@@ -1,0 +1,333 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+      "title": "Patient Management Application",
+      "description": "Application designed to manage patients",
+      "version": "1.0.1",
+      "contact": {
+        "name": "Punit Jain",
+        "email": "punit.jain@zopsmart.com"
+      },
+      "license": {
+        "name": "Apache 2.0",
+        "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+      }
+    },
+    "servers": [
+      {
+        "url": "http://localhost:8080",
+        "description": "URL to connect to the patient_application"
+      }
+    ],
+    "tags": [
+      {
+        "name": "patients",
+        "description": "Access and modify all data related to patients"
+      }
+    ],
+    "components": {
+      "schemas": {
+        "Patient": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "format": "int",
+              "default": 0
+            },
+            "name": {
+              "type": "string",
+              "default": ""
+            },
+            "phone": {
+              "type": "string",
+              "default": ""
+            },
+            "discharged": {
+              "type": "boolean",
+              "format": "bool",
+              "default": false
+            },
+            "bloodGroup": {
+              "type": "string",
+              "description": "Type of Blood Group Patient possess",
+              "enum": [
+                "+A",
+                "-A",
+                "+B",
+                "-B",
+                "+AB",
+                "-AB"
+              ]
+            },
+            "description": {
+              "type": "string",
+              "default": ""
+            },
+            "createdAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "updatedAt": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        },
+        "ApiResponse": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "status": {
+              "type": "string"
+            },
+            "data": {
+              "$ref": "#/components/schemas/Patient"
+            }
+          }
+        },
+        "ApiAllResponse": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer",
+              "example": 200
+            },
+            "status": {
+              "type": "string"
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Patient"
+              }
+            }
+          }
+        },
+        "ApiErrResponse": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "status": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "parameters": {
+        "id": {
+          "name": "id",
+          "in": "path",
+          "description": "patient id",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int"
+          }
+        }
+      },
+      "responses": {
+        "GetAll": {
+          "description": "Response for GetAll",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiAllResponse"
+              }
+            }
+          }
+        },
+        "NotFound": {
+          "description": "Patient Not Found",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiErrResponse"
+              }
+            }
+          }
+        },
+        "BadRequest": {
+          "description": "Bad Request - Invalid Data Format",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiErrResponse"
+              }
+            }
+          }
+        },
+        "ServerError": {
+          "description": "Internal Server Error",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiErrResponse"
+              }
+            }
+          }
+        },
+        "Success": {
+          "description": "Success",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiResponse"
+              }
+            }
+          }
+        }
+      },
+      "requestBodies": {
+        "body": {
+          "required": true,
+          "description": "Patient Data Body",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Patient"
+              }
+            }
+          }
+        }
+      }
+    },
+    "paths": {
+      "/patients": {
+        "post": {
+          "tags": [
+            "patients"
+          ],
+          "summary": "add a new patient to the database",
+          "description": "",
+          "operationId": "create",
+          "requestBody": {
+            "$ref": "#/components/requestBodies/body"
+          },
+          "responses": {
+            "200": {
+              "$ref": "#/components/responses/Success"
+            },
+            "400": {
+              "$ref": "#/components/responses/BadRequest"
+            },
+            "500": {
+              "$ref": "#/components/responses/ServerError"
+            }
+          }
+        },
+        "get": {
+          "tags": [
+            "patients"
+          ],
+          "summary": "get list of all existing patients",
+          "operationId": "getAll",
+          "responses": {
+            "200": {
+              "$ref": "#/components/responses/GetAll"
+            },
+            "404": {
+              "$ref": "#/components/responses/NotFound"
+            },
+            "500": {
+              "$ref": "#/components/responses/ServerError"
+            }
+          }
+        }
+      },
+      "/patients/{id}": {
+        "get": {
+          "tags": [
+            "patients"
+          ],
+          "summary": "find patients by id",
+          "description": "Single id to be provided as a parameter",
+          "operationId": "get",
+          "parameters": [
+            {
+              "$ref": "#/components/parameters/id"
+            }
+          ],
+          "responses": {
+            "200": {
+              "$ref": "#/components/responses/Success"
+            },
+            "400": {
+              "$ref": "#/components/responses/BadRequest"
+            },
+            "404": {
+              "$ref": "#/components/responses/NotFound"
+            },
+            "500": {
+              "$ref": "#/components/responses/ServerError"
+            }
+          }
+        },
+        "put": {
+          "tags": [
+            "patients"
+          ],
+          "summary": "update patient data using id",
+          "description": "id and body provided by the user",
+          "operationId": "update",
+          "requestBody": {
+            "$ref": "#/components/requestBodies/body"
+          },
+          "parameters": [
+            {
+              "$ref": "#/components/parameters/id"
+            }
+          ],
+          "responses": {
+            "200": {
+              "$ref": "#/components/responses/Success"
+            },
+            "400": {
+              "$ref": "#/components/responses/BadRequest"
+            },
+            "500": {
+              "$ref": "#/components/responses/ServerError"
+            }
+          }
+        },
+        "delete": {
+          "tags": [
+            "patients"
+          ],
+          "summary": "delete patient using id",
+          "description": "id provided by the user",
+          "operationId": "delete",
+          "parameters": [
+            {
+              "$ref": "#/components/parameters/id"
+            }
+          ],
+          "responses": {
+            "200": {
+              "$ref": "#/components/responses/BadRequest"
+            },
+            "400": {
+              "$ref": "#/components/responses/BadRequest"
+            },
+            "404": {
+              "$ref": "#/components/responses/NotFound"
+            },
+            "500": {
+              "$ref": "#/components/responses/ServerError"
+            }
+          }
+        }
+      }
+    },
+    "externalDocs": {
+      "description": "Find out more about Patient Management Application",
+      "url": "https://github.com/Golang-interns-2022-batch-2/patient-management"
+    }
+  }
