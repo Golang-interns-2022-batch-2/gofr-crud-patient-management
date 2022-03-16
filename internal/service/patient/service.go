@@ -1,6 +1,8 @@
 package patient
 
 import (
+	"strconv"
+
 	"developer.zopsmart.com/go/gofr/pkg/errors"
 	"developer.zopsmart.com/go/gofr/pkg/gofr"
 	"github.com/shivanisharma200/patient-management/internal/models"
@@ -16,7 +18,8 @@ func New(str store.Patient) *Patient {
 }
 
 // GetPatientService
-func (p *Patient) GetByID(ctx *gofr.Context, id int) (*models.Patient, error) {
+func (p *Patient) GetByID(ctx *gofr.Context, idString string) (*models.Patient, error) {
+	id, _ := strconv.Atoi(idString)
 	if !IsIDValid(id) {
 		return nil, errors.InvalidParam{Param: []string{"id"}}
 	}
@@ -41,12 +44,13 @@ func (p *Patient) Get(ctx *gofr.Context) ([]*models.Patient, error) {
 }
 
 // UpdatePatientService
-func (p *Patient) Update(ctx *gofr.Context, id int, patient *models.Patient) (*models.Patient, error) {
+func (p *Patient) Update(ctx *gofr.Context, idString string, patient *models.Patient) (*models.Patient, error) {
+	id, _ := strconv.Atoi(idString)
 	if !IsIDValid(id) {
 		return nil, errors.InvalidParam{Param: []string{"id"}}
 	}
 
-	_, err := p.GetByID(ctx, id)
+	_, err := p.GetByID(ctx, idString)
 
 	if err != nil {
 		return nil, errors.EntityNotFound{Entity: "Patient", ID: "id"}
@@ -56,12 +60,13 @@ func (p *Patient) Update(ctx *gofr.Context, id int, patient *models.Patient) (*m
 }
 
 // DeletePatientService
-func (p *Patient) Delete(ctx *gofr.Context, id int) error {
+func (p *Patient) Delete(ctx *gofr.Context, idString string) error {
+	id, _ := strconv.Atoi(idString)
 	if !IsIDValid(id) {
 		return errors.InvalidParam{Param: []string{"id"}}
 	}
 
-	_, err := p.GetByID(ctx, id)
+	_, err := p.GetByID(ctx, idString)
 
 	if err != nil {
 		return errors.InvalidParam{Param: []string{"id"}}

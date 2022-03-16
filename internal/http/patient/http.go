@@ -2,7 +2,6 @@ package patient
 
 import (
 	"net/http"
-	"strconv"
 
 	"developer.zopsmart.com/go/gofr/pkg/errors"
 	"developer.zopsmart.com/go/gofr/pkg/gofr"
@@ -39,9 +38,8 @@ func (p *API) GetByID(ctx *gofr.Context) (interface{}, error) {
 	var response interface{}
 
 	idString := ctx.PathParam("id")
-	id, _ := strconv.Atoi(idString)
 
-	patient, err := p.PatientService.GetByID(ctx, id)
+	patient, err := p.PatientService.GetByID(ctx, idString)
 
 	if err != nil {
 		return nil, err
@@ -76,9 +74,6 @@ func (p *API) Create(ctx *gofr.Context) (interface{}, error) {
 		return nil, err
 	}
 
-	patientVal = &models.Patient{ID: patientVal.ID, Name: patientVal.Name, Phone: patientVal.Phone,
-		Discharged: patientVal.Discharged, CreatedAt: patientVal.CreatedAt, UpdatedAt: patientVal.UpdatedAt,
-		BloodGroup: patientVal.BloodGroup, Description: patientVal.Description}
 	response = ResponseStorer{
 		Code:   http.StatusOK,
 		Status: "SUCCESS",
@@ -96,7 +91,6 @@ func (p *API) Update(ctx *gofr.Context) (interface{}, error) {
 	var response interface{}
 
 	idString := ctx.PathParam("id")
-	id, _ := strconv.Atoi(idString)
 
 	var patient *models.Patient
 
@@ -105,7 +99,7 @@ func (p *API) Update(ctx *gofr.Context) (interface{}, error) {
 		return nil, errors.Error("cannot read from body")
 	}
 
-	patient, err = p.PatientService.Update(ctx, id, patient)
+	patient, err = p.PatientService.Update(ctx, idString, patient)
 
 	if err != nil {
 		return nil, err
@@ -152,8 +146,7 @@ func (p *API) Delete(ctx *gofr.Context) (interface{}, error) {
 	var response interface{}
 
 	idString := ctx.PathParam("id")
-	id, _ := strconv.Atoi(idString)
-	err := p.PatientService.Delete(ctx, id)
+	err := p.PatientService.Delete(ctx, idString)
 
 	if err != nil {
 		return nil, err

@@ -50,7 +50,7 @@ func (mr *MockPatientMockRecorder) Create(arg0, arg1 interface{}) *gomock.Call {
 }
 
 // Delete mocks base method
-func (m *MockPatient) Delete(arg0 *gofr.Context, arg1 int) error {
+func (m *MockPatient) Delete(arg0 *gofr.Context, arg1 string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Delete", arg0, arg1)
 	ret0, _ := ret[0].(error)
@@ -79,7 +79,7 @@ func (mr *MockPatientMockRecorder) Get(arg0 interface{}) *gomock.Call {
 }
 
 // GetByID mocks base method
-func (m *MockPatient) GetByID(arg0 *gofr.Context, arg1 int) (*models.Patient, error) {
+func (m *MockPatient) GetByID(arg0 *gofr.Context, arg1 string) (*models.Patient, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetByID", arg0, arg1)
 	ret0, _ := ret[0].(*models.Patient)
@@ -94,7 +94,7 @@ func (mr *MockPatientMockRecorder) GetByID(arg0, arg1 interface{}) *gomock.Call 
 }
 
 // Update mocks base method
-func (m *MockPatient) Update(arg0 *gofr.Context, arg1 int, arg2 *models.Patient) (*models.Patient, error) {
+func (m *MockPatient) Update(arg0 *gofr.Context, arg1 string, arg2 *models.Patient) (*models.Patient, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Update", arg0, arg1, arg2)
 	ret0, _ := ret[0].(*models.Patient)

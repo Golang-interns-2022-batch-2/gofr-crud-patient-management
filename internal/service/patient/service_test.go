@@ -32,7 +32,7 @@ func Test_GetByID(t *testing.T) {
 
 	mockPatientService := store.NewMockPatient(mockCtrl)
 	testCases := []struct {
-		id            int
+		id            string
 		output        models.Patient
 		mockCall      *gomock.Call
 		expectedError error
@@ -40,7 +40,7 @@ func Test_GetByID(t *testing.T) {
 	}{
 		// Success
 		{
-			id:            1,
+			id:            "1",
 			output:        patient,
 			mockCall:      mockPatientService.EXPECT().GetByID(ctx, 1).Return(&patient, nil),
 			expectedError: nil,
@@ -48,7 +48,7 @@ func Test_GetByID(t *testing.T) {
 
 		// Failure Invalid Id
 		{
-			id:            -1,
+			id:            "-1",
 			expectedError: errors.InvalidParam{Param: []string{"id"}},
 		},
 	}
@@ -187,7 +187,7 @@ func Test_Update(t *testing.T) {
 
 	mockPatientService := store.NewMockPatient(mockCtrl)
 	testCases := []struct {
-		id            int
+		id            string
 		output        models.Patient
 		mockCall      []*gomock.Call
 		expectedError error
@@ -196,7 +196,7 @@ func Test_Update(t *testing.T) {
 
 		// Success
 		{
-			id: 1,
+			id: "1",
 			mockCall: []*gomock.Call{mockPatientService.EXPECT().Update(ctx, 1, &patient).Return(&patient, nil),
 				mockPatientService.EXPECT().GetByID(ctx, 1).Return(&patient, nil),
 			},
@@ -204,7 +204,7 @@ func Test_Update(t *testing.T) {
 		},
 		// Failure Invalid Id
 		{
-			id:            -1,
+			id:            "-1",
 			expectedError: errors.InvalidParam{Param: []string{"id"}},
 		},
 	}
@@ -227,14 +227,14 @@ func Test_Delete(t *testing.T) {
 
 	mockPatientService := store.NewMockPatient(mockCtrl)
 	testCases := []struct {
-		id            int
+		id            string
 		mockCall      []*gomock.Call
 		expectedError error
 		status        int
 	}{
 		// Success
 		{
-			id: 1,
+			id: "1",
 			mockCall: []*gomock.Call{mockPatientService.EXPECT().Delete(ctx, 1).Return(nil),
 				mockPatientService.EXPECT().GetByID(ctx, 1).Return(&patient, nil),
 			},
@@ -242,7 +242,7 @@ func Test_Delete(t *testing.T) {
 		},
 		// Failure Invalid Id
 		{
-			id:            -1,
+			id:            "-1",
 			expectedError: errors.InvalidParam{Param: []string{"id"}},
 		},
 	}
