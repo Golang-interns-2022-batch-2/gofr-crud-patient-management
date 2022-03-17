@@ -1,0 +1,536 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "This is Patient Managemment System where we can Create, Update, Delete and Fetch patients from database",
+    "version": "1.0.0",
+    "title": "Patient Management System",
+    "termsOfService": "http://patient.io/terms/",
+    "contact": {
+      "email": "apiteam@patient.io"
+    },
+    "license": {
+      "name": "Apache 2.0"
+    }
+  },
+  "host": "localhost:8080",
+  "basePath": "/",
+  "tags": [
+    {
+      "name": "patient",
+      "description": "Patients details",
+      "externalDocs": {
+        "description": "Find out more",
+        "url": "http://patient.io"
+      }
+    }
+  ],
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/patients": {
+      "post": {
+        "tags": [
+          "patient"
+        ],
+        "summary": "Add patient",
+        "description": "adding patient",
+        "operationId": "addPatient",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Patient added",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/PostSchema"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          },
+          "400": {
+            "description": "Invalid ID",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            },
+            "examples": {
+              "application/json": {
+                "code": 400,
+                "status": "ERROR",
+                "message": "Bad Request"
+              }
+            }
+          },
+          "404": {
+            "description": "Patient not found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            },
+            "examples": {
+              "application/json": {
+                "code": 404,
+                "status": "ERROR",
+                "message": "Page Not Found"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            },
+            "examples": {
+              "application/json": {
+                "code": 500,
+                "status": "ERROR",
+                "message": "Internal Server Error"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "patient"
+        ],
+        "summary": "Get all existing patients",
+        "description": "",
+        "operationId": "getPatients",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/Get"
+            }
+          },
+          "400": {
+            "description": "Invalid ID",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            },
+            "examples": {
+              "application/json": {
+                "code": 400,
+                "status": "ERROR",
+                "message": "Bad Request"
+              }
+            }
+          },
+          "404": {
+            "description": "Patient not found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            },
+            "examples": {
+              "application/json": {
+                "code": 404,
+                "status": "ERROR",
+                "message": "Page Not Found"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            },
+            "examples": {
+              "application/json": {
+                "code": 500,
+                "status": "ERROR",
+                "message": "Internal Server Error"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/patients/{patientId}": {
+      "get": {
+        "tags": [
+          "patient"
+        ],
+        "summary": "Get patient by ID",
+        "description": "get by id patient",
+        "operationId": "getPatientById",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "patientId",
+            "in": "path",
+            "description": "ID of patient to return",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          },
+          "400": {
+            "description": "Invalid ID",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            },
+            "examples": {
+              "application/json": {
+                "code": 400,
+                "status": "ERROR",
+                "message": "Bad Request"
+              }
+            }
+          },
+          "404": {
+            "description": "Patient not found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            },
+            "examples": {
+              "application/json": {
+                "code": 404,
+                "status": "ERROR",
+                "message": "Page Not Found"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            },
+            "examples": {
+              "application/json": {
+                "code": 500,
+                "status": "ERROR",
+                "message": "Internal Server Error"
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "patient"
+        ],
+        "summary": "Updates a patient",
+        "description": "updating patient",
+        "operationId": "updatePatientById",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "patientId",
+            "in": "path",
+            "description": "ID of patient that needs to be updated",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "ppp",
+            "in": "body",
+            "description": "Patient Details that needs to be updated",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/UpdateSchema"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          },
+          "400": {
+            "description": "Invalid ID",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            },
+            "examples": {
+              "application/json": {
+                "code": 400,
+                "status": "ERROR",
+                "message": "Bad Request"
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            },
+            "examples": {
+              "application/json": {
+                "code": 404,
+                "status": "ERROR",
+                "message": "Page Not Found"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            },
+            "examples": {
+              "application/json": {
+                "code": 500,
+                "status": "ERROR",
+                "message": "Internal Server Error"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "patient"
+        ],
+        "summary": "Deletes a patient",
+        "description": "",
+        "operationId": "DeletePatientById",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "patientId",
+            "in": "path",
+            "description": "Patient id to delete",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/Delete"
+            }
+          },
+          "400": {
+            "description": "Invalid ID",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            },
+            "examples": {
+              "application/json": {
+                "code": 400,
+                "status": "ERROR",
+                "message": "Bad Request"
+              }
+            }
+          },
+          "404": {
+            "description": "Patient not found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            },
+            "examples": {
+              "application/json": {
+                "code": 404,
+                "status": "ERROR",
+                "message": "Page Not Found"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            },
+            "examples": {
+              "application/json": {
+                "code": 500,
+                "status": "ERROR",
+                "message": "Internal Server Error"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Patient": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "example": "1"
+        },
+        "name": {
+          "type": "string",
+          "example": "ram"
+        },
+        "phone": {
+          "type": "string",
+          "example": "+9199878787676"
+        },
+        "discharged": {
+          "type": "boolean",
+          "example": true
+        },
+        "createdAt": {
+          "type": "string",
+          "example": "2022-02-01 14:24:22"
+        },
+        "updatedAt": {
+          "type": "string",
+          "example": "2022-02-01 14:24:22"
+        },
+        "bloodGroup": {
+          "type": "string",
+          "example": "+A"
+        },
+        "description": {
+          "type": "string",
+          "example": "patient discharged"
+        }
+      }
+    },
+    "UpdateSchema": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "example": "John"
+        },
+        "description": {
+          "type": "string",
+          "example": "patient discharged"
+        }
+      }
+    },
+    "PostSchema": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "example": "ram"
+        },
+        "phone": {
+          "type": "string",
+          "example": "+9199878787676"
+        },
+        "discharged": {
+          "type": "boolean",
+          "example": true
+        },
+        "bloodGroup": {
+          "type": "string",
+          "example": "+A"
+        },
+        "description": {
+          "type": "string",
+          "example": "patient discharged"
+        }
+      }
+    },
+    "Delete": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "example": 200
+        },
+        "status": {
+          "type": "string",
+          "example": "SUCCESS"
+        },
+        "data": {
+          "type": "string",
+          "example": "Patient deleted successfully."
+        }
+      }
+    },
+    "Error": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "status": {
+          "type": "string"
+        },
+        "Message": {
+          "type": "string"
+        }
+      }
+    },
+    "Get": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "patient": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Patient"
+              }
+            }
+          }
+        }
+      }
+    },
+    "Response": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "example": 200
+        },
+        "status": {
+          "type": "string",
+          "example": "SUCCESS"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "patient": {
+              "$ref": "#/definitions/Patient"
+            }
+          }
+        }
+      }
+    }
+  },
+  "externalDocs": {
+    "description": "Find out more about Swagger",
+    "url": "http://swagger.io"
+  }
+}
