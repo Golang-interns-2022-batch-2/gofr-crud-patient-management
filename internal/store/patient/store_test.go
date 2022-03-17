@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"log"
+	"net/http"
 	"reflect"
 	"testing"
 	"time"
@@ -37,10 +38,10 @@ func Test_GetByID(t *testing.T) {
 	defer db.Close()
 
 	currentTime := time.Now().String()
-
 	testCases := []struct {
 		desc          string
 		id            int
+		idString      string
 		output        *models.Patient
 		mockQuery     interface{}
 		expectedError error
@@ -67,11 +68,32 @@ func Test_GetByID(t *testing.T) {
 				UpdatedAt: currentTime, BloodGroup: "+A", Description: "description"},
 			mockQuery: mock.
 				ExpectQuery(q).
-				WithArgs(ctx, 1).
-				WillReturnError(errors.InvalidParam{Param: []string{"id"}}),
-			expectedError: errors.InvalidParam{Param: []string{"id"}},
+				WithArgs(1).
+				WillReturnError(sql.ErrNoRows),
+			expectedError: errors.EntityNotFound{Entity: "Patient", ID: "1"},
+		},
+		// Failure
+		{
+			desc: "failure test case",
+			id:   1,
+			output: &models.Patient{ID: 1, Name: "ZopSmart", Phone: "+919172681679", Discharged: true, CreatedAt: currentTime,
+				UpdatedAt: currentTime, BloodGroup: "+A", Description: "description"},
+			mockQuery: mock.
+				ExpectQuery(q).
+				WithArgs(1).
+				WillReturnError(&errors.Response{
+					StatusCode: http.StatusInternalServerError,
+					Code:       http.StatusText(http.StatusInternalServerError),
+					Reason:     "cannot fetch row",
+				}),
+			expectedError: &errors.Response{
+				StatusCode: http.StatusInternalServerError,
+				Code:       http.StatusText(http.StatusInternalServerError),
+				Reason:     "cannot fetch row",
+			},
 		},
 	}
+
 	for _, testCase := range testCases {
 		testCase := testCase
 
@@ -132,9 +154,17 @@ func Test_Create(t *testing.T) {
 				mock.
 					ExpectQuery(q).
 					WithArgs(1).
-					WillReturnError(errors.InvalidParam{Param: []string{"id"}}),
+					WillReturnError(&errors.Response{
+						StatusCode: http.StatusInternalServerError,
+						Code:       http.StatusText(http.StatusInternalServerError),
+						Reason:     "cannot create new patient",
+					}),
 			},
-			expectedError: errors.Error("Failed to create patient"),
+			expectedError: &errors.Response{
+				StatusCode: http.StatusInternalServerError,
+				Code:       http.StatusText(http.StatusInternalServerError),
+				Reason:     "cannot create new patient",
+			},
 		},
 	}
 	for _, testCase := range testCases {
@@ -181,8 +211,24 @@ func Test_Get(t *testing.T) {
 			desc: "failure test case",
 			mockQuery: mock.
 				ExpectQuery(q).
-				WillReturnError(errors.EntityNotFound{Entity: "Patient"}),
+				WillReturnError(sql.ErrNoRows),
 			expectedError: errors.EntityNotFound{Entity: "Patient"},
+		},
+		// Failure
+		{
+			desc: "failure test case",
+			mockQuery: mock.
+				ExpectQuery(q).
+				WillReturnError(&errors.Response{
+					StatusCode: http.StatusInternalServerError,
+					Code:       http.StatusText(http.StatusInternalServerError),
+					Reason:     "cannot fetch rows",
+				}),
+			expectedError: &errors.Response{
+				StatusCode: http.StatusInternalServerError,
+				Code:       http.StatusText(http.StatusInternalServerError),
+				Reason:     "cannot fetch rows",
+			},
 		},
 	}
 	for _, testCase := range testCases {
@@ -246,13 +292,25 @@ func Test_Update(t *testing.T) {
 				UpdatedAt: currentTime, BloodGroup: "+A", Description: "description"},
 			mockQuery: []interface{}{mock.ExpectExec("UPDATE patients SET name=?,description=? WHERE id=? AND deleted_at IS NULL").
 				WithArgs("ZopSmart Updated", "description", 1).
-				WillReturnError(errors.Error("Failed to update patient")),
+				WillReturnError(&errors.Response{
+					StatusCode: http.StatusInternalServerError,
+					Code:       http.StatusText(http.StatusInternalServerError),
+					Reason:     "cannot update rows",
+				}),
 				mock.
 					ExpectQuery(q).
 					WithArgs(1).
-					WillReturnError(errors.Error("Failed to update patient")),
+					WillReturnError(&errors.Response{
+						StatusCode: http.StatusInternalServerError,
+						Code:       http.StatusText(http.StatusInternalServerError),
+						Reason:     "cannot update rows",
+					}),
 			},
-			expectedError: errors.Error("Failed to update patient"),
+			expectedError: &errors.Response{
+				StatusCode: http.StatusInternalServerError,
+				Code:       http.StatusText(http.StatusInternalServerError),
+				Reason:     "cannot update rows",
+			},
 		},
 	}
 	for _, testCase := range testCases {
@@ -300,8 +358,16 @@ func Test_Delete(t *testing.T) {
 			id:   1,
 			mockQuery: mock.ExpectExec("UPDATE patients SET deleted_at=? WHERE id=? AND deleted_at IS NULL").
 				WithArgs(currentTime, 1).
-				WillReturnError(errors.Error("Failed to delete patient")),
-			expectedError: errors.Error("Failed to delete patient"),
+				WillReturnError(&errors.Response{
+					StatusCode: http.StatusInternalServerError,
+					Code:       http.StatusText(http.StatusInternalServerError),
+					Reason:     "cannot delete row",
+				}),
+			expectedError: &errors.Response{
+				StatusCode: http.StatusInternalServerError,
+				Code:       http.StatusText(http.StatusInternalServerError),
+				Reason:     "cannot delete row",
+			},
 		},
 	}
 	for _, testCase := range testCases {

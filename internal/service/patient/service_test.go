@@ -1,6 +1,7 @@
 package patient
 
 import (
+	"net/http"
 	"reflect"
 	"testing"
 	"time"
@@ -85,9 +86,17 @@ func Test_Create(t *testing.T) {
 		},
 		// Failure
 		{
-			input:         patient,
-			mockCall:      mockPatientService.EXPECT().Create(ctx, &patient).Return(nil, errors.Error("invalid fileds")),
-			expectedError: errors.Error("invalid fileds"),
+			input: patient,
+			mockCall: mockPatientService.EXPECT().Create(ctx, &patient).Return(nil, &errors.Response{
+				StatusCode: http.StatusBadRequest,
+				Code:       http.StatusText(http.StatusBadRequest),
+				Reason:     "Invalid fields provided",
+			}),
+			expectedError: &errors.Response{
+				StatusCode: http.StatusBadRequest,
+				Code:       http.StatusText(http.StatusBadRequest),
+				Reason:     "Invalid fields provided",
+			},
 		},
 		// Invalid Id
 		{
@@ -101,7 +110,11 @@ func Test_Create(t *testing.T) {
 				BloodGroup:  "+A",
 				Description: "description",
 			},
-			expectedError: errors.Error("invalid fileds"),
+			expectedError: &errors.Response{
+				StatusCode: http.StatusBadRequest,
+				Code:       http.StatusText(http.StatusBadRequest),
+				Reason:     "Invalid fields provided",
+			},
 		},
 		// Invalid Name
 		{
@@ -115,7 +128,11 @@ func Test_Create(t *testing.T) {
 				BloodGroup:  "+A",
 				Description: "description",
 			},
-			expectedError: errors.Error("invalid fileds"),
+			expectedError: &errors.Response{
+				StatusCode: http.StatusBadRequest,
+				Code:       http.StatusText(http.StatusBadRequest),
+				Reason:     "Invalid fields provided",
+			},
 		},
 		// Invalid Phone
 		{
@@ -129,7 +146,11 @@ func Test_Create(t *testing.T) {
 				BloodGroup:  "+A",
 				Description: "description",
 			},
-			expectedError: errors.Error("invalid fileds"),
+			expectedError: &errors.Response{
+				StatusCode: http.StatusBadRequest,
+				Code:       http.StatusText(http.StatusBadRequest),
+				Reason:     "Invalid fields provided",
+			},
 		},
 	}
 	p := New(mockPatientService)

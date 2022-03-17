@@ -52,7 +52,8 @@ func (p *API) Create(ctx *gofr.Context) (interface{}, error) {
 
 	err := ctx.Bind(&patient)
 	if err != nil {
-		return nil, errors.Error("cannot read from body")
+		ctx.Logger.Errorf("error in binding: %v", err)
+		return nil, errors.InvalidParam{}
 	}
 
 	patientVal, err := p.PatientService.Create(ctx, &patient)
@@ -69,31 +70,6 @@ func (p *API) Create(ctx *gofr.Context) (interface{}, error) {
 	return r, nil
 }
 
-// updatePatient
-func (p *API) Update(ctx *gofr.Context) (interface{}, error) {
-	idString := ctx.PathParam("id")
-
-	var patient *models.Patient
-
-	err := ctx.Bind(&patient)
-	if err != nil {
-		return nil, errors.Error("cannot read from body")
-	}
-
-	patient, err = p.PatientService.Update(ctx, idString, patient)
-
-	if err != nil {
-		return nil, err
-	}
-
-	Data := data{patient}
-	r := types.Response{
-		Data: Data,
-	}
-
-	return r, nil
-}
-
 // GetPatients
 func (p *API) Get(ctx *gofr.Context) (interface{}, error) {
 	patients, err := p.PatientService.Get(ctx)
@@ -103,6 +79,32 @@ func (p *API) Get(ctx *gofr.Context) (interface{}, error) {
 	}
 
 	Data := data{patients}
+	r := types.Response{
+		Data: Data,
+	}
+
+	return r, nil
+}
+
+// updatePatient
+func (p *API) Update(ctx *gofr.Context) (interface{}, error) {
+	idString := ctx.PathParam("id")
+
+	var patient *models.Patient
+
+	err := ctx.Bind(&patient)
+	if err != nil {
+		ctx.Logger.Errorf("error in binding: %v", err)
+		return nil, errors.InvalidParam{}
+	}
+
+	patient, err = p.PatientService.Update(ctx, idString, patient)
+
+	if err != nil {
+		return nil, err
+	}
+
+	Data := data{patient}
 	r := types.Response{
 		Data: Data,
 	}

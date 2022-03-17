@@ -1,6 +1,9 @@
 package patient
 
 import (
+	"database/sql"
+	"net/http"
+	"strconv"
 	"time"
 
 	"developer.zopsmart.com/go/gofr/pkg/errors"
@@ -43,8 +46,19 @@ func (p Patient) GetByID(ctx *gofr.Context, id int) (*models.Patient, error) {
 		Scan(&patient.ID, &patient.Name, &patient.Phone, &patient.Discharged, &patient.CreatedAt, &patient.UpdatedAt,
 			&patient.BloodGroup, &patient.Description)
 
+		// sqlerrnorows -- entity not found
+		// if err != nil errors.Response 500, message
+	if err == sql.ErrNoRows {
+		idString := strconv.Itoa(id)
+		return nil, errors.EntityNotFound{Entity: "Patient", ID: idString}
+	}
+
 	if err != nil {
-		return nil, errors.InvalidParam{Param: []string{"id"}}
+		return nil, &errors.Response{
+			StatusCode: http.StatusInternalServerError,
+			Code:       http.StatusText(http.StatusInternalServerError),
+			Reason:     "cannot fetch row",
+		}
 	}
 
 	return &patient, nil
@@ -57,7 +71,11 @@ func (p Patient) Create(ctx *gofr.Context, patient *models.Patient) (*models.Pat
 		patient.Description)
 
 	if err != nil {
-		return nil, errors.Error("Failed to create patient")
+		return nil, &errors.Response{
+			StatusCode: http.StatusInternalServerError,
+			Code:       http.StatusText(http.StatusInternalServerError),
+			Reason:     "cannot create new patient",
+		}
 	}
 
 	lastInserted, _ := resp.LastInsertId()
@@ -71,8 +89,16 @@ func (p Patient) Get(ctx *gofr.Context) ([]*models.Patient, error) {
 	rows, err := ctx.DB().
 		QueryContext(ctx, q)
 
-	if err != nil {
+	if err == sql.ErrNoRows {
 		return nil, errors.EntityNotFound{Entity: "Patient"}
+	}
+
+	if err != nil {
+		return nil, &errors.Response{
+			StatusCode: http.StatusInternalServerError,
+			Code:       http.StatusText(http.StatusInternalServerError),
+			Reason:     "cannot fetch rows",
+		}
 	}
 
 	var patients []*models.Patient
@@ -103,7 +129,11 @@ func (p Patient) Update(ctx *gofr.Context, id int, patient *models.Patient) (*mo
 	_, err := ctx.DB().ExecContext(ctx, query, values...)
 
 	if err != nil {
-		return nil, errors.Error("Failed to update patient")
+		return nil, &errors.Response{
+			StatusCode: http.StatusInternalServerError,
+			Code:       http.StatusText(http.StatusInternalServerError),
+			Reason:     "cannot update rows",
+		}
 	}
 
 	return p.GetByID(ctx, id)
@@ -116,7 +146,11 @@ func (p Patient) Delete(ctx *gofr.Context, id int) (err error) {
 	_, err = ctx.DB().ExecContext(ctx, "UPDATE patients SET deleted_at=? WHERE id=? AND deleted_at IS NULL", time.Now().Format(format), id)
 
 	if err != nil {
-		return errors.Error("Failed to delete patient")
+		return &errors.Response{
+			StatusCode: http.StatusInternalServerError,
+			Code:       http.StatusText(http.StatusInternalServerError),
+			Reason:     "cannot delete row",
+		}
 	}
 
 	return nil

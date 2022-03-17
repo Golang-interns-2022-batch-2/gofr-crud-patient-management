@@ -101,9 +101,17 @@ func Test_Create(t *testing.T) {
 				"bloodGroup": "+A",
 				"description": "patient description"
 				}`),
-			input:         patient,
-			mockCall:      mockPatientService.EXPECT().Create(gomock.Any(), gomock.Any()).Return(nil, errors.Error("invalid fileds")),
-			expectedError: errors.Error("invalid fileds"),
+			input: patient,
+			mockCall: mockPatientService.EXPECT().Create(gomock.Any(), gomock.Any()).Return(nil, &errors.Response{
+				StatusCode: http.StatusBadRequest,
+				Code:       http.StatusText(http.StatusBadRequest),
+				Reason:     "Invalid fields provided",
+			}),
+			expectedError: &errors.Response{
+				StatusCode: http.StatusBadRequest,
+				Code:       http.StatusText(http.StatusBadRequest),
+				Reason:     "Invalid fields provided",
+			},
 		},
 		{
 			body: []byte(`{
@@ -117,7 +125,7 @@ func Test_Create(t *testing.T) {
 				}`),
 			input: patient,
 			// mockCall:      mockPatientService.EXPECT().CreatePatientService(gomock.Any()).Return(models.Patient{}, errors.New("error")),
-			expectedError: errors.Error("cannot read from body"),
+			expectedError: errors.InvalidParam{},
 		},
 	}
 
@@ -209,7 +217,7 @@ func Test_Update(t *testing.T) {
 				"name": 1,
 				"description": "patient description"
 				}`),
-			expectedError: errors.Error("cannot read from body"),
+			expectedError: errors.InvalidParam{},
 		},
 	}
 
@@ -243,8 +251,9 @@ func Test_DeletePatientService(t *testing.T) {
 		},
 		// Failure
 		{
-			mockCall:      mockPatientService.EXPECT().Delete(gomock.Any(), gomock.Any()).Return(errors.InvalidParam{Param: []string{"id"}}),
-			expectedError: errors.InvalidParam{Param: []string{"id"}},
+			mockCall: mockPatientService.EXPECT().
+				Delete(gomock.Any(), gomock.Any()).Return(errors.Error("unexpected error occuered in deleting row")),
+			expectedError: errors.Error("unexpected error occuered in deleting row"),
 		},
 	}
 

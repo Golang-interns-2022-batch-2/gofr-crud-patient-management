@@ -1,6 +1,7 @@
 package patient
 
 import (
+	"net/http"
 	"strconv"
 
 	"developer.zopsmart.com/go/gofr/pkg/errors"
@@ -32,7 +33,11 @@ func (p *Patient) Create(ctx *gofr.Context, patient *models.Patient) (*models.Pa
 	err := patient.Validate()
 
 	if err != nil {
-		return nil, errors.Error("invalid fileds")
+		return nil, &errors.Response{
+			StatusCode: http.StatusBadRequest,
+			Code:       http.StatusText(http.StatusBadRequest),
+			Reason:     "Invalid fields provided",
+		}
 	}
 
 	return p.PatientStoreHandler.Create(ctx, patient)
@@ -53,7 +58,7 @@ func (p *Patient) Update(ctx *gofr.Context, idString string, patient *models.Pat
 	_, err := p.GetByID(ctx, idString)
 
 	if err != nil {
-		return nil, errors.EntityNotFound{Entity: "Patient", ID: "id"}
+		return nil, errors.EntityNotFound{Entity: "Patient", ID: idString}
 	}
 
 	return p.PatientStoreHandler.Update(ctx, id, patient)
@@ -69,7 +74,7 @@ func (p *Patient) Delete(ctx *gofr.Context, idString string) error {
 	_, err := p.GetByID(ctx, idString)
 
 	if err != nil {
-		return errors.InvalidParam{Param: []string{"id"}}
+		return errors.EntityNotFound{Entity: "Patient", ID: idString}
 	}
 
 	return p.PatientStoreHandler.Delete(ctx, id)
